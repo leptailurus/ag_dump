@@ -1,0 +1,8 @@
+* Setup for examining Agenda files
+** Recommended software
+   - vim
+   - emacs
+   - git
+   - tmux
+   - gcc (msys2: mingw-w64-ucrt-x86_64-gcc)
+   - dosbox (msys2: mingw-w64-ucrt-x86_64-dosbox)

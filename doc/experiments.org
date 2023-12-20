@@ -1,0 +1,8 @@
+* 0 Create New File
+** Actions performed
+   - Open a non-existing file to create it
+   - Leave description and password empty
+   - Save the file
+
+** Observations
+   - A file of 4,104 bytes is created
