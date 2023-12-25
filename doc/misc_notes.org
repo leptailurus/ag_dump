@@ -1,0 +1,4 @@
+* Creating C string literals for list of UTF-8 strings
+  #+BEGIN_SRC bash
+od -A n -t x1 doc/cp850_utf8_raw.txt | tr -d '\n' | sed 's/ 0a/\n/g' | sed 's/ /\\x/g' | sed 's/^.*$/"&"/g' > doc/cp850_utf8_C_strings.txt
+  #+END_SRC

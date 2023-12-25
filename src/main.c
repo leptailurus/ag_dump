@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 
 #include <io.h>
+#include <locale.h>
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -132,17 +133,79 @@ void dump_hex(const uint8_t *data, size_t length, size_t abs_offset)
 			remaining > 16 ? 16 : remaining;
 		remaining -= this_line;
 
-		printf("%06zx %04zx ", abs_offset, rel_offset);
+		printf("%06zx %04zx  ", abs_offset, rel_offset);
 
 		for (size_t i = 0; i < this_line; ++i) {
 			printf("%02hhx%s", data[i],
-				i==7 ? "-" : " ");
+				i==7 ? " - " : " ");
+		}
+		if (this_line < 16) {
+			if (this_line < 8) {
+				printf("  ");
+			}
+			for (size_t i = 0; i < 16 - this_line; ++i) {
+				printf("   ");
+			}
+		}
+		printf(" ");
+
+		for (size_t i = 0; i < this_line; ++i) {
+			if (data[i] < 0x20 ||
+				(data[i] >= 0x7f && data[i] < 0xa0) ||
+				data[i] == 0xad)
+			{
+				printf("%s", "\xc2\xb7");
+			}
+			else if (data[i] < 0x80) {
+				putchar(data[i]);
+			}
+			else {
+				putchar(0xc0 | (data[i] >> 6));
+				putchar(0x80 | (data[i] & 0x3f));
+			}
 		}
 
 		data += this_line;
 		abs_offset += this_line;
 		rel_offset += this_line;
 		printf("\n");
+	}
+}
+
+void dump_int_value(size_t size, bool is_signed, const uint8_t *data) {
+	switch (size) {
+		uint16_t i2;
+		case 2:
+			memcpy(&i2, data, 2);
+			if (is_signed) {
+				printf("%hd (0x%02hx)", (int16_t)i2, i2);
+			}
+			else {
+				printf("%hu (0x%02hx)", i2, i2);
+			}
+			break;
+		default:
+			printf("Invalid field size (%zu)", size);
+			break;
+	}
+}
+
+void dump_field_value(const struct ag_field_spec* field,
+	const uint8_t* data)
+{
+	switch (field->type) {
+		case FIELD_TYPE_UNKNOWN:
+			printf("(%zu bytes)", field->size);
+			break;
+		case FIELD_TYPE_INT:
+			dump_int_value(field->size, true, data);
+			break;
+		case FIELD_TYPE_UINT:
+			dump_int_value(field->size, false, data);
+			break;
+		default:
+			printf("[Unknown field type]");
+			break;
 	}
 }
 
@@ -155,18 +218,32 @@ void dump_fields(const uint8_t *base,
 		const uint8_t *data = base + fields[i].offset;
 		const size_t abs_offset = base_offset + fields[i].offset;
 		dump_hex(data, fields[i].size, abs_offset);
-		printf("%s\n", fields[i].description);
+		printf("  %s: ", fields[i].description);
+		dump_field_value(&fields[i], data);
+		printf("\n");
 	}
+	printf("\n");
 }
 
 void dump_main_header() {
 	const uint8_t *start_address = ag_file_data;
 	printf("Main Header\n");
-	printf("===========\n\n");
+	printf("===========\n");
 	dump_fields(start_address, main_header_fields, main_header_field_count);
 }
 
 int main(int argc, char *argv[]) {
+#ifdef __MINGW32__
+	{
+		const char* ctype = getenv("LC_CTYPE");
+		if (ctype) {
+			setlocale(LC_CTYPE, ctype);
+		}
+	}
+#else
+	setlocale(LC_ALL, "");
+#endif
+
 	if (!process_args(argc, argv)) {
 		return 1;
 	}
@@ -182,10 +259,5 @@ int main(int argc, char *argv[]) {
 	if (ag_file_data) {
 		free(ag_file_data);
 		ag_file_data = 0;
-	}
-	{
-		unsigned char s[] = {0xe2, 0x96, 0x91, 0x0};
-		wchar_t ws[] = {0x41, 0x43, 0xb0, 0x2510, 0x2591, 0x42, 0x0};
-		printf("%s\n", s);
 	}
 }
