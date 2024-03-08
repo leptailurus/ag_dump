@@ -172,43 +172,6 @@ void dump_hex(const uint8_t *data, size_t length, size_t abs_offset)
 	}
 }
 
-void dump_int_value(size_t size, bool is_signed, const uint8_t *data) {
-	switch (size) {
-		uint16_t i2;
-		case 2:
-			memcpy(&i2, data, 2);
-			if (is_signed) {
-				printf("%hd (0x%02hx)", (int16_t)i2, i2);
-			}
-			else {
-				printf("%hu (0x%02hx)", i2, i2);
-			}
-			break;
-		default:
-			printf("Invalid field size (%zu)", size);
-			break;
-	}
-}
-
-void dump_field_value(const struct ag_field_spec* field,
-	const uint8_t* data)
-{
-	switch (field->type) {
-		case FIELD_TYPE_UNKNOWN:
-			printf("(%zu bytes)", field->size);
-			break;
-		case FIELD_TYPE_INT:
-			dump_int_value(field->size, true, data);
-			break;
-		case FIELD_TYPE_UINT:
-			dump_int_value(field->size, false, data);
-			break;
-		default:
-			printf("[Unknown field type]");
-			break;
-	}
-}
-
 void dump_fields(const uint8_t *base,
 	const struct ag_field_spec *fields,
 	size_t count)
