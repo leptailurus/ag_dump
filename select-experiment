@@ -1,0 +1,36 @@
+#!/bin/sh
+
+usage() {
+    echo "Usage: select-experiment.sh part-of-name"
+    exit 1
+}
+
+if [ $# -ne 1 ]; then
+    usage
+fi
+
+choices=`ls examine/experiments | grep $1`
+if [ -z "${choices}" ]; then
+    echo "No matching experiments found"
+    exit 1
+fi
+
+count=`echo "${choices}" | wc -l`
+
+if [ "${count}" -eq 0 ]; then
+    echo "No valid experiment selected"
+    exit 1
+elif [ "${count}" -eq 1 ]; then
+    experiment=${choices}
+else
+    COLUMNS=1
+    select experiment in ${choices}; do
+        if [ -z "${experiment}" ]; then
+            echo "No valid experiment selected"
+            exit 1
+        fi
+        break
+    done
+fi
+
+./set-experiment "${experiment}"

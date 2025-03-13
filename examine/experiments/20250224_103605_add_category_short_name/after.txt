@@ -141,15 +141,15 @@ Object 00001
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 0 (0x0000)
+  Last search node: 0 (0x0000)
     0020                          -             00 00                    ··
   Unknown: (6 bytes)
     0020                          -                   00 00                ··
     0030  00 00 00 00                                        ····
-  Genealogy object: 0 (0x0000)
-    0030                    00 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 0 (0x0000)
+    0030                    00 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 00 00 00 00 00 00          ········
 
@@ -194,15 +194,15 @@ Object 00003
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 0 (0x0000)
+  Last search node: 0 (0x0000)
     0020                          -             00 00                    ··
   Unknown: (6 bytes)
     0020                          -                   00 00                ··
     0030  00 00 00 00                                        ····
-  Genealogy object: 0 (0x0000)
-    0030                    00 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 0 (0x0000)
+    0030                    00 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 00 00 00 00 00 00          ········
 
@@ -247,15 +247,15 @@ Object 00005
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 0 (0x0000)
+  Last search node: 0 (0x0000)
     0020                          -             00 00                    ··
   Unknown: (6 bytes)
     0020                          -                   00 00                ··
     0030  00 00 00 00                                        ····
-  Genealogy object: 0 (0x0000)
-    0030                    00 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 0 (0x0000)
+    0030                    00 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 00 00 00 00 00 00          ········
 
@@ -300,15 +300,15 @@ Object 00007
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 0 (0x0000)
+  Last search node: 0 (0x0000)
     0020                          -             00 00                    ··
   Unknown: (6 bytes)
     0020                          -                   00 00                ··
     0030  00 00 00 00                                        ····
-  Genealogy object: 0 (0x0000)
-    0030                    00 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 0 (0x0000)
+    0030                    00 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 00 00 00 00 00 00          ········
 
@@ -353,15 +353,15 @@ Object 00009
     0020              29 00                                      )·
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 2 (0x0002)
+  Last search node: 2 (0x0002)
     0020                          -             02 00                    ··
   Unknown: (6 bytes)
     0020                          -                   08 00                ··
     0030  00 00 08 00                                        ····
-  Genealogy object: 0 (0x0000)
-    0030                    00 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 0 (0x0000)
+    0030                    00 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 04 00 00 00 00 00          ········
 
@@ -418,15 +418,15 @@ Object 00012
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 3 (0x0003)
+  Last search node: 3 (0x0003)
     0020                          -             03 00                    ··
   Unknown: (6 bytes)
     0020                          -                   08 00                ··
     0030  00 00 09 00                                        ····
-  Genealogy object: 14 (0x000e)
-    0030                    0e 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 14 (0x000e)
+    0030                    0e 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 00 00 00 00 00 00          ········
 
@@ -495,15 +495,15 @@ Object 00016
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 4 (0x0004)
+  Last search node: 4 (0x0004)
     0020                          -             04 00                    ··
   Unknown: (6 bytes)
     0020                          -                   88 80                ··
     0030  00 00 00 00                                        ····
-  Genealogy object: 14 (0x000e)
-    0030                    0e 00 -                                ··
   Category type: Date/Time (13 / 0x000d)
     0030              0d 00                                      ··
+  Genealogy object: 14 (0x000e)
+    0030                    0e 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 00 12 00 00 00 00 00          ········
 
@@ -548,15 +548,15 @@ Object 00018
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 5 (0x0005)
+  Last search node: 5 (0x0005)
     0020                          -             05 00                    ··
   Unknown: (6 bytes)
     0020                          -                   08 cf                ·Ï
     0030  00 00 00 00                                        ····
-  Genealogy object: 14 (0x000e)
-    0030                    0e 00 -                                ··
   Category type: Date/Time (13 / 0x000d)
     0030              0d 00                                      ··
+  Genealogy object: 14 (0x000e)
+    0030                    0e 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 10 00 14 00 00 00 00 00          ········
 
@@ -601,15 +601,15 @@ Object 00020
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 6 (0x0006)
+  Last search node: 6 (0x0006)
     0020                          -             06 00                    ··
   Unknown: (6 bytes)
     0020                          -                   08 82                ··
     0030  00 00 08 00                                        ····
-  Genealogy object: 14 (0x000e)
-    0030                    0e 00 -                                ··
   Category type: Date/Time (13 / 0x000d)
     0030              0d 00                                      ··
+  Genealogy object: 14 (0x000e)
+    0030                    0e 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 12 00 00 00 00 00 00 00          ········
 
@@ -974,15 +974,15 @@ Object 00041
     0020              00 00                                      ··
   Unknown: (6 bytes)
     0020                    00 00 - 00 00 00 00                    ······
-  Search tree link: 11 (0x000b)
+  Last search node: 11 (0x000b)
     0020                          -             0b 00                    ··
   Unknown: (6 bytes)
     0020                          -                   08 00                ··
     0030  00 00 01 00                                        ····
-  Genealogy object: 14 (0x000e)
-    0030                    0e 00 -                                ··
   Category type: Standard (1 / 0x0001)
     0030              01 00                                      ··
+  Genealogy object: 14 (0x000e)
+    0030                    0e 00 -                                ··
   Unknown: (8 bytes)
     0030                          - 00 01 00 00 00 00 00 00          ········
 
@@ -1083,16 +1083,20 @@ Link 00001
     0000        09 00                                          ··
   Category: 0 (0x0000)
     0000              00 00                                      ··
-  Unknown: (4 bytes)
-    0000                    00 00 - 00 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 3 (0x0003)
     0000                          -       03 00                        ··
   Right child: 0 (0x0000)
     0000                          -             00 00                    ··
   Parent: 0 (0x0000)
     0000                          -                   00 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 0 (0x00)
     0010                       00 -                                 ·
   Unknown: (4 bytes)
@@ -1106,16 +1110,20 @@ Link 00002
     0000        09 00                                          ··
   Category: 9 (0x0009)
     0000              09 00                                      ··
-  Unknown: (4 bytes)
-    0000                    00 00 - 00 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 0 (0x0000)
     0000                          -       00 00                        ··
   Right child: 0 (0x0000)
     0000                          -             00 00                    ··
   Parent: 10 (0x000a)
     0000                          -                   0a 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 0 (0x00)
     0010                       00 -                                 ·
   Unknown: (4 bytes)
@@ -1129,16 +1137,20 @@ Link 00003
     0000        09 00                                          ··
   Category: 12 (0x000c)
     0000              0c 00                                      ··
-  Unknown: (4 bytes)
-    0000                    00 00 - 00 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 4 (0x0004)
     0000                          -       04 00                        ··
   Right child: 10 (0x000a)
     0000                          -             0a 00                    ··
   Parent: 1 (0x0001)
     0000                          -                   01 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 3 (0x03)
     0010                       03 -                                 ·
   Unknown: (4 bytes)
@@ -1152,16 +1164,20 @@ Link 00004
     0000        09 00                                          ··
   Category: 16 (0x0010)
     0000              10 00                                      ··
-  Unknown: (4 bytes)
-    0000                    00 00 - 00 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 0 (0x0000)
     0000                          -       00 00                        ··
   Right child: 6 (0x0006)
     0000                          -             06 00                    ··
   Parent: 3 (0x0003)
     0000                          -                   03 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 1 (0x01)
     0010                       01 -                                 ·
   Unknown: (4 bytes)
@@ -1175,16 +1191,20 @@ Link 00005
     0000        09 00                                          ··
   Category: 18 (0x0012)
     0000              12 00                                      ··
-  Unknown: (4 bytes)
-    0000                    00 00 - 00 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 11 (0x000b)
     0000                          -       0b 00                        ··
   Right child: 0 (0x0000)
     0000                          -             00 00                    ··
   Parent: 10 (0x000a)
     0000                          -                   0a 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 1 (0x01)
     0010                       01 -                                 ·
   Unknown: (4 bytes)
@@ -1198,16 +1218,20 @@ Link 00006
     0000        09 00                                          ··
   Category: 20 (0x0014)
     0000              14 00                                      ··
-  Unknown: (4 bytes)
-    0000                    00 00 - 00 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 0 (0x0000)
     0000                          -       00 00                        ··
   Right child: 0 (0x0000)
     0000                          -             00 00                    ··
   Parent: 4 (0x0004)
     0000                          -                   04 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 0 (0x00)
     0010                       00 -                                 ·
   Unknown: (4 bytes)
@@ -1267,16 +1291,20 @@ Link 00010
     0000        09 00                                          ··
   Category: 41 (0x0029)
     0000              29 00                                      )·
-  Unknown: (4 bytes)
-    0000                    0b 00 - 00 00                          ····
+  Next node: 11 (0x000b)
+    0000                    0b 00 -                                ··
+  Prev node: 0 (0x0000)
+    0000                          - 00 00                            ··
   Left child: 2 (0x0002)
     0000                          -       02 00                        ··
   Right child: 5 (0x0005)
     0000                          -             05 00                    ··
   Parent: 3 (0x0003)
     0000                          -                   03 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 00                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 0 (0x00)
+    0010                    00                                     ·
   Height: 2 (0x02)
     0010                       02 -                                 ·
   Unknown: (4 bytes)
@@ -1290,16 +1318,20 @@ Link 00011
     0000        09 00                                          ··
   Category: 41 (0x0029)
     0000              29 00                                      )·
-  Unknown: (4 bytes)
-    0000                    00 00 - 0a 00                          ····
+  Next node: 0 (0x0000)
+    0000                    00 00 -                                ··
+  Prev node: 10 (0x000a)
+    0000                          - 0a 00                            ··
   Left child: 0 (0x0000)
     0000                          -       00 00                        ··
   Right child: 0 (0x0000)
     0000                          -             00 00                    ··
   Parent: 5 (0x0005)
     0000                          -                   05 00                ··
-  Unknown: (7 bytes)
-    0010  00 00 00 00 00 00 01                               ·······
+  Unknown: (6 bytes)
+    0010  00 00 00 00 00 00                                  ······
+  Condition: 1 (0x01)
+    0010                    01                                     ·
   Height: 0 (0x00)
     0010                       00 -                                 ·
   Unknown: (4 bytes)

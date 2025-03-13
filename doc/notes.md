@@ -106,81 +106,42 @@ MAIN
 
 * Search node byte 0x15 is 0x01 for category short name
 * Category name and short name are separated by semicolon
-* Category object 0x2e changed to 0x08 when adding short name - could be length of category name?
+* Add short name:
+  * 0x2e: 0x0000 -> 0x0800 (bit 3)
+  * 0x3a: 0x0400 -> 0x0000 (bit 2)
 * Category object 0x0a changed from 0x04 to 0x00 when adding short name
-* Search node: 0x06 next node; 0x08 prev node (double-check)
 * !Check how different match expressions affect search nodes
-* Category type: 0x34
-  * Standard: 0x0100
-  * Unindexed: 0x0500
-  * Numeric: 0x0900
-  * Date/Time: 0x0d00
-* Deactivate "Match category name": 0x38: 0x00 -> 0x08
-* Deactivate "Match short name": 0x38: 0x00 -> 0x10
-* Exclusive children: Category type: 0x01 -> 0x00
 * Special actions: Discard
   * 0x26: Pointer to object of type 0x05
-* Adv. Text Matching: Global (On) -> Off: 0x39: 0x01 -> 0x41
-* Adv. Text Matching: Global (On) -> On: 0x39: 0x01 -> 0x81
-* Adv. Match on: Global->Item text: 0x38: 0x00 -> 0x01
-  * Note text: 0x02
-  * Item&Note: 0x03
-* Adv. Req'd match strength Global->x 0x2e: 0x0800 ->
-  * Exact 100%: 0x8800
-  * Partial 50%: 0x0801
-  * Minimal 2%: 0x8801
-* Confirm assignments 0x38:
-  * Global: 0x0001
-  * Always: 0x0003
-  * Sometimes: 0x0005
-  * Never: 0x0007
-* Ignore Suffixes: 0x2e:
-  * Global: 0x0800
-  * No: 0x0802
-  * Yes: 0x0804
-* Ignore Accents: 0x2e:
-  * Global: 0x0800
-  * No: 0x0808
-  * Yes: 0x0810
-* Assignment Conditions: 0x3a
-  * Global: 0x00
-  * Off: 0x01
-  * On: 0x02
-* Assignment Actions: 0x35
-  * Global: 0x00
-  * Off: 0x04
-  * On: 0x08
-* Apply conditions: 0x34
-  * Automatically: 0x0100
-  * On Demand: 0x4101
-  * Never: 0x8102
-* If Conflict: 0x2e
-  * Global: 0x0800
-  * Keep old: 0x2800
-  * Override old: 0x4800
-* Allow explicit assignments: 0x38
-  * Yes: 0x0001
-  * No: 0x8001
-* Make items fit category setting: 0x38
-  * Yes: 0x8001
-  * No: 0x8000
-* Relationship Text/Assignment: 0x38
-  * Global: 0x0001
-  * OR: 0x2001
-  * AND: 0x4001
-* Category is protected: 0x2e
+
+### Word 0x2e
+
+* Category is protected: 0x2e bits 0-1
   * Global: 0x0800
   * No: 0x0900
   * Yes: 0x0a00
-* Can have new children: 0x2e
+* If Conflict: 0x2e bits 5-6
+  * Global: 0x0800
+  * Keep old: 0x2800
+  * Override old: 0x4800
+* Req'd match strength: 0x2e bits 7-8
+  * Global: 0x0800
+  * Exact 100%: 0x8800
+  * Partial 50%: 0x0801
+  * Minimal 2%: 0x8801
+* Ignore Suffixes: 0x2e bits 9-10
+  * Global: 0x0800
+  * No: 0x0802
+  * Yes: 0x0804
+* Ignore Accents: 0x2e bits 11-12
+  * Global: 0x0800
+  * No: 0x0808
+  * Yes: 0x0810
+* Can have new children: 0x2e bits 13-14
   * Global: 0x0800
   * No: 0x0820
   * Yes: 0x0840
-
-### Numeric item
-
-### Date categories
-* Assign item date: 0x2e
+* (Date only) Assign item date: 0x2e bits 9-12
   * Never: 0x0880
   * When item is entered: 0x0882
   * When item text is edited: 0x0884
@@ -192,6 +153,74 @@ MAIN
     * Which one: 0x3c (zero-based)
   * From the note text: 0x0890
   * From the item or note text: 0x0892
+
+### Word 0x34
+
+* Exclusive children: 0x34 bit 0
+  * No: 0x0100
+  * Yes: 0x0000
+* Category type: 0x34 bits 2-3
+  * Standard: 0x0100
+  * Unindexed: 0x0500
+  * Numeric: 0x0900
+  * Date/Time: 0x0d00
+* Apply conditions: 0x34 bits 8-9
+  * Automatically: 0x0100
+  * On Demand: 0x4101
+  * Never: 0x8102
+* Assignment Actions: 0x34 bits 10-11
+  * Global: 0x0100
+  * Off: 0x0104
+  * On: 0x0108
+
+### Word 0x38
+
+* Match on: 0x38 bits 0-1
+  * Global-> 0x0001
+  * Item text: 0x0101
+  * Note text: 0x0201
+  * Item&Note: 0x0301
+* Match category name: 0x38 bit 3
+  * On: 0x0001
+  * Off: 0x0801
+* Match short name: 0x38 bit 4
+  * On: 0x0001
+  * Off: 0x1001
+* Relationship Text/Assignment: 0x38 bits 5-6
+  * Global: 0x0001
+  * OR: 0x2001
+  * AND: 0x4001
+* Allow explicit assignments: 0x38 bit 7
+  * Yes: 0x0001
+  * No: 0x8001
+* Make items fit category setting: 0x38 bit 8
+  * Yes: 0x0001
+  * No: 0x0000
+* Confirm assignments: 0x38 bits 9-10
+  * Global: 0x0001
+  * Always: 0x0003
+  * Sometimes: 0x0005
+  * Never: 0x0007
+* Text Matching: 0x38 bits 14-15
+  * Global: 0x0001
+  * Off: 0x0041
+  * On: 0x0081
+
+### Word 0x3a
+
+* Assignment Conditions: 0x3a bits 0-1
+  * Global: 0x0000
+  * Off: 0x0100
+  * On: 0x0200
+
+### Rest
+
+adfdasf
+
+### Numeric item
+
+### Date categories
+
 * Set the item date from the done key: 0x2e
   * No: 0x0880
   * Yes: 0x8880
@@ -224,4 +253,43 @@ MAIN
 * 0x12: nonzero for notes file
 
 
-34 d4 21:00
+# Moving items to Trash
+
+Items:
+* Item 1: 39 (0x27)
+* Item 2: 40 (0x28)
+
+Categories:
+*  1 (0x01): !Trash!
+* 12 (0x0c): Initial Section
+* 20 (0x14): Entry
+
+Links:
+* Item 1 -> Entry: 8 (0x08)
+* Item 1 -> Initial: 9 (0x09)
+* Item 2 -> Entry: 10 (0x0a)
+* Item 2 -> Initial: 12 (0x0c)
+
+## Observations
+
+* Category object:
+  * 0x08 / 0x0a: First/last item link
+* Link record:
+  * 0x06 / 0x08: Prev/next link record for item
+  * 0x0c / 0x0e: Prev/next link record for category
+  * 0x10 bit 11: Flag?
+* Free link record:
+  * Type: 0
+  * 0x0a / 0x0c: Prev/next free link
+* Free object record:
+  * Type: 0
+  * 0x04 / 0x06: Prev/next free object
+* Main header:
+  * 0x58: Last free object
+  * 0x5a: Last free link
+  * 0x68: Last discarded item?
+  * 0x72: Number of items
+  * 0x76: Number of free links
+  * 0x01e8: Selected object (item/category)?
+  * 0x01ee: 
+* Discarding items assigns them to the !Trash! cateogory and discards their previous category assignments

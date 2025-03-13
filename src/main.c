@@ -224,7 +224,7 @@ void dump_main_header(struct dump_context *context) {
 	printf("Main Header\n");
 	printf("===========\n");
 	context->current_object = start_address;
-	dump_fields(start_address, main_header_fields, main_header_field_count, context);
+	dump_fields(start_address, ag_main_header_fields, ag_main_header_field_count, context);
 	printf("\n");
 }
 
@@ -233,7 +233,7 @@ void dump_extra_header(struct dump_context *context) {
 	printf("Extra Header\n");
 	printf("============\n");
 	context->current_object = start_address;
-	dump_fields(start_address, extra_header_fields, extra_header_field_count, context);
+	dump_fields(start_address, ag_extra_header_fields, ag_extra_header_field_count, context);
 	printf("\n");
 }
 
@@ -257,7 +257,7 @@ void dump_object_struct(const uint8_t *data, struct dump_context *context) {
 			dump_fields(data, object_struct_genealogy_fields, object_struct_genealogy_field_count, context);
 			break;
 		default:
-			dump_fields(data, object_struct_base_fields, object_struct_base_field_count, context);
+			dump_fields(data, ag_object_struct_base_fields, ag_object_struct_base_field_count, context);
 			break;
 	}
 }

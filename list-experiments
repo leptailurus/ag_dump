@@ -1,0 +1,3 @@
+#!/bin/sh
+
+ls -w 1 examine/experiments | less -X -F

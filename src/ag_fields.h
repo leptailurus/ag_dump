@@ -28,35 +28,33 @@ struct ag_field_spec {
 	size_t size;
 };
 
-extern struct ag_field_spec main_header_fields[];
-extern size_t main_header_field_count;
+struct ag_bitfield_member {
+	size_t offset;
+	size_t size;
+	size_t max_value;
+	const char **value_names;
+};
 
-extern struct ag_field_spec extra_header_fields[];
-extern size_t extra_header_field_count;
+#define DECLARE_STRUCT(name) \
+extern struct ag_field_spec name##_fields[]; \
+extern size_t name##_field_count
 
-extern struct ag_field_spec object_struct_base_fields[];
-extern size_t object_struct_base_field_count;
+#define DECLARE_BITFIELD(name) \
+extern struct ag_bitfield_member name##_members[]; \
+extern size_t name##_member_count
 
-extern struct ag_field_spec object_struct_item_fields[];
-extern size_t object_struct_item_field_count;
+DECLARE_STRUCT(ag_main_header);
+DECLARE_STRUCT(ag_extra_header);
 
-extern struct ag_field_spec object_struct_text_fields[];
-extern size_t object_struct_text_field_count;
+DECLARE_STRUCT(ag_object_struct_base);
+DECLARE_STRUCT(object_struct_item);
+DECLARE_STRUCT(object_struct_text);
+DECLARE_STRUCT(object_struct_category);
+DECLARE_STRUCT(object_struct_genealogy);
 
-extern struct ag_field_spec object_struct_category_fields[];
-extern size_t object_struct_category_field_count;
-
-extern struct ag_field_spec object_struct_genealogy_fields[];
-extern size_t object_struct_genealogy_field_count;
-
-extern struct ag_field_spec link_struct_base_fields[];
-extern size_t link_struct_base_field_count;
-
-extern struct ag_field_spec link_struct_link_fields[];
-extern size_t link_struct_link_field_count;
-
-extern struct ag_field_spec link_struct_catsearch_fields[];
-extern size_t link_struct_catsearch_field_count;
+DECLARE_STRUCT(link_struct_base);
+DECLARE_STRUCT(link_struct_link);
+DECLARE_STRUCT(link_struct_catsearch);
 
 struct dump_context {
 	const struct ag_main_header *main_header;

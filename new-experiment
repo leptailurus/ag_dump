@@ -1,7 +1,7 @@
 #!/bin/sh
 
 usage() {
-    echo "Usage: new-experiment.sh input-file experiment-name"
+    echo "Usage: new-experiment [b/a/w] experiment-name"
     exit 1
 }
 
@@ -9,7 +9,26 @@ if [ $# -ne 2 ]; then
     usage
 fi
 
-if [ ! -f "$1" ]; then
+if [ ! -f experiment ] ; then
+    echo "Current experiment not set"
+fi
+
+experiment_name=`cat experiment`
+echo "Current Experiment: ${experiment_name}"
+
+experiment_dir="examine/experiments/${experiment_name}"
+if [ ! -d "${experiment_dir}" ]; then
+    echo "Current experiment is not valid"
+    exit 1
+fi
+
+case "$1" in
+    "b") input_file=${experiment_dir}/BEFORE.AG ;;
+    "a") input_file=${experiment_dir}/AFTER.AG ;;
+    "w") input_file=${experiment_dir}/WORK.AG ;;
+esac
+
+if [ ! -f "${input_file}" ]; then
     echo "Invalid input file!"
     exit 1
 fi
@@ -23,7 +42,7 @@ if ! mkdir -p "${experiment_dir}" ; then
     exit 1
 fi
 
-if ! cp -p "$1" "${experiment_dir}/BEFORE.AG" ; then
+if ! cp -p "${input_file}" "${experiment_dir}/BEFORE.AG" ; then
     echo "Failed to copy input file"
     exit 1
 fi
@@ -34,5 +53,7 @@ if ! cp -p "${experiment_dir}/BEFORE.AG" "${experiment_dir}/AFTER.AG" ; then
 fi
 
 echo -n ${experiment_name} > experiment
+
+echo "New Experiment: ${experiment_name}"
 
 dosbox -conf examine/local.conf -c "MOUNT C examine/CDrive" -c "MOUNT D ${experiment_dir}" -c "C:" -c "CD AGENDA" -c "AGENDA D:\\AFTER.AG" -c "EXIT" 2> /dev/null

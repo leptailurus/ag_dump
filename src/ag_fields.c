@@ -9,50 +9,60 @@
 
 #define sizeof_field(parent, field) (sizeof(((parent*)0)->field))
 
+#define _M_CAT(a, b) a##b
+#define M_CAT(a, b) _M_CAT(a, b)
+#define ID(a) a
+
+#define STRUCT_BEGIN \
+struct ag_field_spec M_CAT(STRUCT_NAME, _fields[]) = {
+
+#define STRUCT_END \
+};\
+\
+size_t M_CAT(STRUCT_NAME, _field_count) = \
+	sizeof(M_CAT(STRUCT_NAME, _fields)) / sizeof(M_CAT(STRUCT_NAME, _fields[0]));
+
 #define MAKE_FIELD(parent, field, desc, type) \
 { offsetof(struct parent, field), desc, FIELD_TYPE_##type, sizeof_field(struct parent, field) }
 
-struct ag_field_spec main_header_fields[] = {
-	MAKE_FIELD(ag_main_header, id, "ID", UINT),
-	MAKE_FIELD(ag_main_header, description, "Database description", CSTRING),
-	MAKE_FIELD(ag_main_header, password, "Password", AG_PASSWD),
-	MAKE_FIELD(ag_main_header, first_free_obj, "First free object", UINT),
-	MAKE_FIELD(ag_main_header, last_obj_in_file, "Last object in file", UINT),
-	MAKE_FIELD(ag_main_header, first_free_link, "First free link", UINT),
-	MAKE_FIELD(ag_main_header, last_link_in_file, "Last link in file", UINT),
-	MAKE_FIELD(ag_main_header, unknown040, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_main_header, unknown058, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_main_header, save_date, "Save date", FAT_DATE),
-	MAKE_FIELD(ag_main_header, unknown05e, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_main_header, save_time, "Save time", FAT_TIME),
-	MAKE_FIELD(ag_main_header, unknown062, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_main_header, category_count, "Category count", UINT),
-	MAKE_FIELD(ag_main_header, unknown076, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_main_header, save_datetime, "Save date/time", DATETIME),
-	MAKE_FIELD(ag_main_header, unknown170, "Unknown", UNKNOWN)
-};
+#define STRUCT_FIELD(field, desc, type) \
+{ offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_##type, sizeof_field(struct ID(STRUCT_NAME), field) }
 
-size_t main_header_field_count =
-	sizeof(main_header_fields) / sizeof(main_header_fields[0]);
+#define STRUCT_NAME ag_main_header
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(description, "Database description", CSTRING),
+	STRUCT_FIELD(password, "Password", AG_PASSWD),
+	STRUCT_FIELD(first_free_obj, "First free object", UINT),
+	STRUCT_FIELD(last_obj_in_file, "Last object in file", UINT),
+	STRUCT_FIELD(first_free_link, "First free link", UINT),
+	STRUCT_FIELD(last_link_in_file, "Last link in file", UINT),
+	STRUCT_FIELD(unknown040, "Unknown", UNKNOWN),
+	STRUCT_FIELD(unknown058, "Unknown", UNKNOWN),
+	STRUCT_FIELD(save_date, "Save date", FAT_DATE),
+	STRUCT_FIELD(unknown05e, "Unknown", UNKNOWN),
+	STRUCT_FIELD(save_time, "Save time", FAT_TIME),
+	STRUCT_FIELD(unknown062, "Unknown", UNKNOWN),
+	STRUCT_FIELD(category_count, "Category count", UINT),
+	STRUCT_FIELD(unknown076, "Unknown", UNKNOWN),
+	STRUCT_FIELD(save_datetime, "Save date/time", DATETIME),
+	STRUCT_FIELD(unknown170, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
+#define STRUCT_NAME ag_extra_header
+STRUCT_BEGIN
+	STRUCT_FIELD(unknown000, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
-struct ag_field_spec extra_header_fields[] = {
-	MAKE_FIELD(ag_extra_header, unknown000, "Unknown", UNKNOWN)
-};
-
-size_t extra_header_field_count =
-	sizeof(extra_header_fields) / sizeof(extra_header_fields[0]);
-
-
-struct ag_field_spec object_struct_base_fields[] = {
-	MAKE_FIELD(ag_object_struct_base, id, "ID", UINT),
-	MAKE_FIELD(ag_object_struct_base, type, "Type", AG_ITEM_TYPE),
-	MAKE_FIELD(ag_object_struct_base, unknown04, "Unknown", UNKNOWN)
-};
-
-size_t object_struct_base_field_count =
-	sizeof(object_struct_base_fields) / sizeof(object_struct_base_fields[0]);
-
+#define STRUCT_NAME ag_object_struct_base
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_ITEM_TYPE),
+	STRUCT_FIELD(unknown04, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
 struct ag_field_spec object_struct_item_fields[] = {
 	MAKE_FIELD(ag_object_struct_item, id, "ID", UINT),
