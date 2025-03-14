@@ -13,6 +13,24 @@
 #define M_CAT(a, b) _M_CAT(a, b)
 #define ID(a) a
 
+#define DEFINE_ENUM_NAMES(name, ...) \
+const char *name##_names[] = {__VA_ARGS__}; \
+size_t name##_name_count = sizeof(name##_names) / sizeof(name##_names[0])
+
+DEFINE_ENUM_NAMES(ag_global_off_on,
+	"Global",
+	"Off",
+	"On"
+);
+
+
+#define DEFINE_STRUCT(name, ...) \
+struct ag_field_spec name##_fields[] = { \
+	__VA_ARGS__ \
+}; \
+size_t name##_field_count = \
+	sizeof(name##_fields) / sizeof(name##_fields[0]))
+
 #define STRUCT_BEGIN \
 struct ag_field_spec M_CAT(STRUCT_NAME, _fields[]) = {
 
@@ -64,110 +82,97 @@ STRUCT_BEGIN
 STRUCT_END
 #undef STRUCT_NAME
 
-struct ag_field_spec object_struct_item_fields[] = {
-	MAKE_FIELD(ag_object_struct_item, id, "ID", UINT),
-	MAKE_FIELD(ag_object_struct_item, type, "Type", AG_ITEM_TYPE),
-	MAKE_FIELD(ag_object_struct_item, text_pointer, "Text pointer", UINT),
-	MAKE_FIELD(ag_object_struct_item, note_pointer, "Note pointer", UINT),
-	MAKE_FIELD(ag_object_struct_item, unknown08, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_object_struct_item, first_link, "First link", UINT),
-	MAKE_FIELD(ag_object_struct_item, last_link, "Last link", UINT),
-	MAKE_FIELD(ag_object_struct_item, unknown16, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_object_struct_item, text, "Text", CSTRING),
-	MAKE_FIELD(ag_object_struct_item, unknown3e, "Unknown", UNKNOWN)
-};
+#define STRUCT_NAME ag_object_struct_item
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_ITEM_TYPE),
+	STRUCT_FIELD(text_pointer, "Text pointer", UINT),
+	STRUCT_FIELD(note_pointer, "Note pointer", UINT),
+	STRUCT_FIELD(unknown08, "Unknown", UNKNOWN),
+	STRUCT_FIELD(first_link, "First link", UINT),
+	STRUCT_FIELD(last_link, "Last link", UINT),
+	STRUCT_FIELD(unknown16, "Unknown", UNKNOWN),
+	STRUCT_FIELD(text, "Text", CSTRING),
+	STRUCT_FIELD(unknown3e, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
-size_t object_struct_item_field_count =
-	sizeof(object_struct_item_fields) / sizeof(object_struct_item_fields[0]);
+#define STRUCT_NAME ag_object_struct_text
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_ITEM_TYPE),
+	STRUCT_FIELD(next, "Next", UINT),
+	STRUCT_FIELD(prev, "Prev", UINT),
+	STRUCT_FIELD(text, "Text", CSTRING)
+STRUCT_END
+#undef STRUCT_NAME
 
+#define STRUCT_NAME ag_object_struct_category
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_ITEM_TYPE),
+	STRUCT_FIELD(text_pointer, "Text pointer", UINT),
+	STRUCT_FIELD(note_pointer, "Note pointer", UINT),
+	STRUCT_FIELD(unknown08, "Unknown", UNKNOWN),
+	STRUCT_FIELD(prev_sibling, "Prev sibling", UINT),
+	STRUCT_FIELD(next_sibling, "Next sibling", UINT),
+	STRUCT_FIELD(parent, "Parent", UINT),
+	STRUCT_FIELD(first_child, "First child", UINT),
+	STRUCT_FIELD(last_child, "Last child", UINT),
+	STRUCT_FIELD(unknown26, "Unknown", UNKNOWN),
+	STRUCT_FIELD(last_search_node, "Last search node", UINT),
+	STRUCT_FIELD(unknown2e, "Unknown", UNKNOWN),
+	STRUCT_FIELD(category_type, "Category type", AG_CATEGORY_TYPE),
+	STRUCT_FIELD(genealogy_object, "Genealogy object", UINT),
+	STRUCT_FIELD(unknown38, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
-struct ag_field_spec object_struct_text_fields[] = {
-	MAKE_FIELD(ag_object_struct_text, id, "ID", UINT),
-	MAKE_FIELD(ag_object_struct_text, type, "Type", AG_ITEM_TYPE),
-	MAKE_FIELD(ag_object_struct_text, next, "Next", UINT),
-	MAKE_FIELD(ag_object_struct_text, prev, "Prev", UINT),
-	MAKE_FIELD(ag_object_struct_text, text, "Text", CSTRING)
-};
-
-size_t object_struct_text_field_count =
-	sizeof(object_struct_text_fields) / sizeof(object_struct_text_fields[0]);
-
-
-struct ag_field_spec object_struct_category_fields[] = {
-	MAKE_FIELD(ag_object_struct_category, id, "ID", UINT),
-	MAKE_FIELD(ag_object_struct_category, type, "Type", AG_ITEM_TYPE),
-	MAKE_FIELD(ag_object_struct_category, text_pointer, "Text pointer", UINT),
-	MAKE_FIELD(ag_object_struct_category, note_pointer, "Note pointer", UINT),
-	MAKE_FIELD(ag_object_struct_category, unknown08, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_object_struct_category, prev_sibling, "Prev sibling", UINT),
-	MAKE_FIELD(ag_object_struct_category, next_sibling, "Next sibling", UINT),
-	MAKE_FIELD(ag_object_struct_category, parent, "Parent", UINT),
-	MAKE_FIELD(ag_object_struct_category, first_child, "First child", UINT),
-	MAKE_FIELD(ag_object_struct_category, last_child, "Last child", UINT),
-	MAKE_FIELD(ag_object_struct_category, unknown26, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_object_struct_category, last_search_node, "Last search node", UINT),
-	MAKE_FIELD(ag_object_struct_category, unknown2e, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_object_struct_category, category_type, "Category type", AG_CATEGORY_TYPE),
-	MAKE_FIELD(ag_object_struct_category, genealogy_object, "Genealogy object", UINT),
-	MAKE_FIELD(ag_object_struct_category, unknown38, "Unknown", UNKNOWN)
-};
-
-size_t object_struct_category_field_count =
-	sizeof(object_struct_category_fields) / sizeof(object_struct_category_fields[0]);
-
-
-struct ag_field_spec object_struct_genealogy_fields[] = {
-	MAKE_FIELD(ag_object_struct_genealogy, id, "ID", UINT),
-	MAKE_FIELD(ag_object_struct_genealogy, type, "Type", AG_ITEM_TYPE),
-	MAKE_FIELD(ag_object_struct_genealogy, genealogy, "Genealogy", AG_GENEALOGY)
-};
-
-size_t object_struct_genealogy_field_count =
-	sizeof(object_struct_genealogy_fields) / sizeof(object_struct_genealogy_fields[0]);
+#define STRUCT_NAME ag_object_struct_genealogy
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_ITEM_TYPE),
+	STRUCT_FIELD(genealogy, "Genealogy", AG_GENEALOGY)
+STRUCT_END
+#undef STRUCT_NAME
 
 
-struct ag_field_spec link_struct_base_fields[] = {
-	MAKE_FIELD(ag_link_struct_base, id, "ID", UINT),
-	MAKE_FIELD(ag_link_struct_base, type, "Type", AG_LINK_TYPE),
-	MAKE_FIELD(ag_link_struct_base, unknown04, "Unknown", UNKNOWN)
-};
+#define STRUCT_NAME ag_link_struct_base
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_LINK_TYPE),
+	STRUCT_FIELD(unknown04, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
-size_t link_struct_base_field_count =
-	sizeof(link_struct_base_fields) / sizeof(link_struct_base_fields[0]);
+#define STRUCT_NAME ag_link_struct_link
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_LINK_TYPE),
+	STRUCT_FIELD(target, "Target", UINT),
+	STRUCT_FIELD(prev_link, "Prev link", UINT),
+	STRUCT_FIELD(next_link, "Next link", UINT),
+	STRUCT_FIELD(origin, "Origin", UINT),
+	STRUCT_FIELD(unknown0c, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
-
-struct ag_field_spec link_struct_link_fields[] = {
-	MAKE_FIELD(ag_link_struct_link, id, "ID", UINT),
-	MAKE_FIELD(ag_link_struct_link, type, "Type", AG_LINK_TYPE),
-	MAKE_FIELD(ag_link_struct_link, target, "Target", UINT),
-	MAKE_FIELD(ag_link_struct_link, prev_link, "Prev link", UINT),
-	MAKE_FIELD(ag_link_struct_link, next_link, "Next link", UINT),
-	MAKE_FIELD(ag_link_struct_link, origin, "Origin", UINT),
-	MAKE_FIELD(ag_link_struct_link, unknown0c, "Unknown", UNKNOWN)
-};
-
-size_t link_struct_link_field_count =
-	sizeof(link_struct_link_fields) / sizeof(link_struct_link_fields[0]);
-
-
-struct ag_field_spec link_struct_catsearch_fields[] = {
-	MAKE_FIELD(ag_link_struct_catsearch, id, "ID", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, type, "Type", AG_LINK_TYPE),
-	MAKE_FIELD(ag_link_struct_catsearch, category, "Category", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, next_node, "Next node", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, prev_node, "Prev node", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, left_child, "Left child", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, right_child, "Right child", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, parent, "Parent", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, unknown10, "Unknown", UNKNOWN),
-	MAKE_FIELD(ag_link_struct_catsearch, condition, "Condition", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, height, "Height", UINT),
-	MAKE_FIELD(ag_link_struct_catsearch, unknown18, "Unknown", UNKNOWN)
-};
-
-size_t link_struct_catsearch_field_count =
-	sizeof(link_struct_catsearch_fields) / sizeof(link_struct_catsearch_fields[0]);
-
+#define STRUCT_NAME ag_link_struct_catsearch
+STRUCT_BEGIN
+	STRUCT_FIELD(id, "ID", UINT),
+	STRUCT_FIELD(type, "Type", AG_LINK_TYPE),
+	STRUCT_FIELD(category, "Category", UINT),
+	STRUCT_FIELD(next_node, "Next node", UINT),
+	STRUCT_FIELD(prev_node, "Prev node", UINT),
+	STRUCT_FIELD(left_child, "Left child", UINT),
+	STRUCT_FIELD(right_child, "Right child", UINT),
+	STRUCT_FIELD(parent, "Parent", UINT),
+	STRUCT_FIELD(unknown10, "Unknown", UNKNOWN),
+	STRUCT_FIELD(condition, "Condition", UINT),
+	STRUCT_FIELD(height, "Height", UINT),
+	STRUCT_FIELD(unknown18, "Unknown", UNKNOWN)
+STRUCT_END
+#undef STRUCT_NAME
 
 void dump_unknown_value(size_t size, const uint8_t *data) {
 	(void)data;

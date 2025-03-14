@@ -43,18 +43,24 @@ extern size_t name##_field_count
 extern struct ag_bitfield_member name##_members[]; \
 extern size_t name##_member_count
 
+#define DECLARE_ENUM_NAMES(name) \
+extern const char *name##_names[]; \
+extern size_t name##_name_count
+
+DECLARE_ENUM_NAMES(ag_global_off_on);
+
 DECLARE_STRUCT(ag_main_header);
 DECLARE_STRUCT(ag_extra_header);
 
 DECLARE_STRUCT(ag_object_struct_base);
-DECLARE_STRUCT(object_struct_item);
-DECLARE_STRUCT(object_struct_text);
-DECLARE_STRUCT(object_struct_category);
-DECLARE_STRUCT(object_struct_genealogy);
+DECLARE_STRUCT(ag_object_struct_item);
+DECLARE_STRUCT(ag_object_struct_text);
+DECLARE_STRUCT(ag_object_struct_category);
+DECLARE_STRUCT(ag_object_struct_genealogy);
 
-DECLARE_STRUCT(link_struct_base);
-DECLARE_STRUCT(link_struct_link);
-DECLARE_STRUCT(link_struct_catsearch);
+DECLARE_STRUCT(ag_link_struct_base);
+DECLARE_STRUCT(ag_link_struct_link);
+DECLARE_STRUCT(ag_link_struct_catsearch);
 
 struct dump_context {
 	const struct ag_main_header *main_header;

@@ -245,16 +245,16 @@ void dump_object_struct(const uint8_t *data, struct dump_context *context) {
 	switch (object->type)
 	{
 		case 1:
-			dump_fields(data, object_struct_item_fields, object_struct_item_field_count, context);
+			dump_fields(data, ag_object_struct_item_fields, ag_object_struct_item_field_count, context);
 			break;
 		case 2:
-			dump_fields(data, object_struct_text_fields, object_struct_text_field_count, context);
+			dump_fields(data, ag_object_struct_text_fields, ag_object_struct_text_field_count, context);
 			break;
 		case 3:
-			dump_fields(data, object_struct_category_fields, object_struct_category_field_count, context);
+			dump_fields(data, ag_object_struct_category_fields, ag_object_struct_category_field_count, context);
 			break;
 		case 9:
-			dump_fields(data, object_struct_genealogy_fields, object_struct_genealogy_field_count, context);
+			dump_fields(data, ag_object_struct_genealogy_fields, ag_object_struct_genealogy_field_count, context);
 			break;
 		default:
 			dump_fields(data, ag_object_struct_base_fields, ag_object_struct_base_field_count, context);
@@ -281,13 +281,13 @@ void dump_link_struct(const uint8_t *data, struct dump_context *context) {
 	switch (link->type)
 	{
 		case 1:
-			dump_fields(data, link_struct_link_fields, link_struct_link_field_count, context);
+			dump_fields(data, ag_link_struct_link_fields, ag_link_struct_link_field_count, context);
 			break;
 		case 9:
-			dump_fields(data, link_struct_catsearch_fields, link_struct_catsearch_field_count, context);
+			dump_fields(data, ag_link_struct_catsearch_fields, ag_link_struct_catsearch_field_count, context);
 			break;
 		default:
-			dump_fields(data, link_struct_base_fields, link_struct_base_field_count, context);
+			dump_fields(data, ag_link_struct_base_fields, ag_link_struct_base_field_count, context);
 			break;
 	}
 }
