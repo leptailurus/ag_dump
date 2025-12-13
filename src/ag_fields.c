@@ -13,23 +13,34 @@
 #define M_CAT(a, b) _M_CAT(a, b)
 #define ID(a) a
 
-#define DEFINE_ENUM_NAMES(name, ...) \
-const char *name##_names[] = {__VA_ARGS__}; \
-size_t name##_name_count = sizeof(name##_names) / sizeof(name##_names[0])
+#define DEFINE_ENUM_VALUES(name, ...) \
+const struct ag_enum_value name##_values[] = {__VA_ARGS__}; \
+const size_t name##_value_count = sizeof(name##_values) / sizeof(name##_values[0])
 
-DEFINE_ENUM_NAMES(ag_global_off_on,
-	"Global",
-	"Off",
-	"On"
+DEFINE_ENUM_VALUES(ag_no_yes,
+	{0x00, "No"},
+	{0x01, "Yes"}
+);
+
+DEFINE_ENUM_VALUES(ag_global_off_on,
+	{0x00, "Global"},
+	{0x01, "Off"},
+	{0x02, "On"}
 );
 
 
-#define DEFINE_STRUCT(name, ...) \
-struct ag_field_spec name##_fields[] = { \
-	__VA_ARGS__ \
-}; \
-size_t name##_field_count = \
-	sizeof(name##_fields) / sizeof(name##_fields[0]))
+#define DEFINE_BITFIELD(name, ...) \
+const struct ag_bitfield_member name##_members[] = {__VA_ARGS__}; \
+const size_t name##_member_count = sizeof(name##_members) / sizeof(name##_members[0])
+
+#define BITFIELD_UNKNOWN(offset, size) {offset, size, "Unknown", BITFIELD_MEMBER_UNKNOWN, 0, 0}
+#define BITFIELD_RESERVED(offset, size) {offset, size, "Reserved", BITFIELD_MEMBER_RESERVED, 0, 0}
+#define BITFIELD_ENUM(offset, size, description, name) {offset, size, description, BITFIELD_MEMBER_ENUM, name##_values, name##_value_count}
+
+DEFINE_BITFIELD(ag_backup_settings,
+	BITFIELD_ENUM(0, 1, "Make backup on open", ag_no_yes),
+	BITFIELD_RESERVED(1, 7)
+);
 
 #define STRUCT_BEGIN \
 struct ag_field_spec M_CAT(STRUCT_NAME, _fields[]) = {
@@ -40,11 +51,11 @@ struct ag_field_spec M_CAT(STRUCT_NAME, _fields[]) = {
 size_t M_CAT(STRUCT_NAME, _field_count) = \
 	sizeof(M_CAT(STRUCT_NAME, _fields)) / sizeof(M_CAT(STRUCT_NAME, _fields[0]));
 
-#define MAKE_FIELD(parent, field, desc, type) \
-{ offsetof(struct parent, field), desc, FIELD_TYPE_##type, sizeof_field(struct parent, field) }
-
 #define STRUCT_FIELD(field, desc, type) \
-{ offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_##type, sizeof_field(struct ID(STRUCT_NAME), field) }
+{ offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_##type, sizeof_field(struct ID(STRUCT_NAME), field), 0, 0 }
+
+#define STRUCT_BITFIELD(field, desc, bitfield) \
+{ offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_BITFIELD, sizeof_field(struct ID(STRUCT_NAME), field), bitfield##_members, bitfield##_member_count }
 
 #define STRUCT_NAME ag_main_header
 STRUCT_BEGIN
@@ -55,10 +66,12 @@ STRUCT_BEGIN
 	STRUCT_FIELD(last_obj_in_file, "Last object in file", UINT),
 	STRUCT_FIELD(first_free_link, "First free link", UINT),
 	STRUCT_FIELD(last_link_in_file, "Last link in file", UINT),
-	STRUCT_FIELD(unknown040, "Unknown", UNKNOWN),
+	STRUCT_FIELD(main_category, "Main category", UINT),
+	STRUCT_FIELD(unknown042, "Unknown", UNKNOWN),
 	STRUCT_FIELD(unknown058, "Unknown", UNKNOWN),
 	STRUCT_FIELD(save_date, "Save date", FAT_DATE),
-	STRUCT_FIELD(unknown05e, "Unknown", UNKNOWN),
+	STRUCT_BITFIELD(backup_settings, "Backup settings", ag_backup_settings),
+	STRUCT_FIELD(unknown05f, "Unknown", UNKNOWN),
 	STRUCT_FIELD(save_time, "Save time", FAT_TIME),
 	STRUCT_FIELD(unknown062, "Unknown", UNKNOWN),
 	STRUCT_FIELD(category_count, "Category count", UINT),
@@ -242,9 +255,121 @@ void dump_datetime(size_t size, const uint8_t *data)
 		adt.year, adt.month, adt.day, adt.hour, adt.minute, adt.second, *dt);
 }
 
+void dump_bitfield_member_unk_res(uint32_t value, const struct ag_bitfield_member *member, struct dump_context *context)
+{
+	if (member->type == BITFIELD_MEMBER_UNKNOWN) {
+		printf("Unknown (0x%x)", value);
+	}
+	else {
+		printf("Reserved (0x%x)", value);
+		if (value != 0) {
+			fprintf(stderr, "WARNING: %s (offset 0x%08llx, local 0x%04llx) reserved bitfield member at offset %lld is nonzero",
+					context->current_object_name, context->global_offset, context->local_offset, member->offset);
+		}
+	}
+}
+
+void dump_bitfield_member_enum(uint32_t value, const struct ag_bitfield_member *member, struct dump_context *context)
+{
+	const struct ag_enum_value* enum_values = (const struct ag_enum_value*)member->context;
+	bool found = false;
+	printf("%s: ", member->description);
+	for (size_t i = 0; i < member->context_size; i++) {
+		if (value == enum_values[i].value) {
+			found = true;
+			printf("%s (0x%x)", enum_values[i].name, value);
+			break;
+		}
+	}
+	if (!found) {
+		printf("<Invalid> (0x%x)", value);
+	}
+}
+
+void dump_bitfield(size_t size, const char* description, const struct ag_bitfield_member *members, size_t member_count, const uint8_t *data, struct dump_context *context)
+{
+	const size_t num_bits = size * 8;
+	size_t next_bit = 0;
+	uint32_t value;
+
+	switch (size)
+	{
+		case 1:
+			value = *((const uint8_t*)data);
+			break;
+		case 2:
+			value = *((const uint16_t*)data);
+			break;
+		case 4:
+			value = *((const uint32_t*)data);
+			break;
+		default:
+			fprintf(stderr, "ERROR: Bitfield %s; found size: %lld, expected 1, 2, or 4\n", description, size);
+			return;
+	}
+
+	printf("Bitfield");
+	for (size_t im = 0; im < member_count; im++) {
+		const struct ag_bitfield_member *m = members + im;
+		const uint32_t member_mask = 0xffffffff >> (32 - m->size);
+		const uint32_t member_value = (value >> m->offset) & member_mask;
+
+		if (m->offset < next_bit) {
+			fprintf(stderr, "ERROR: Bitfield %s; member %lld overlapping with previous member(s)\n", description, im);
+			return;
+		}
+		if (m->offset >= num_bits) {
+			fprintf(stderr, "ERROR: Bitfield %s; member %lld starting beyond end of bitfield\n", description, im);
+			return;
+		}
+		if (m->size < 1) {
+			fprintf(stderr, "ERROR: Bitfield %s; member %lld has size <= 1\n", description, im);
+			return;
+		}
+		if (m->offset + m->size > num_bits) {
+			fprintf(stderr, "ERROR: Bitfield %s; member %lld extending beyond end of bitfield\n", description, im);
+			return;
+		}
+		if (m->offset > next_bit) {
+			fprintf(stderr, "WARNING: Bitfield %s; member %lld has a gap to previous member\n", description, im);
+		}
+
+		printf("\n      ");
+		for (int8_t bit = (int8_t)num_bits - 1; bit >= 0; --bit) {
+			uint32_t mask = 1 << bit;
+			uint32_t bit_value = value & mask;
+			if (bit >= m->offset && bit < (m->offset + m->size)) {
+				printf(bit_value != 0 ? "1" : "0");
+			}
+			else {
+				printf("x");
+			}
+			if ((bit % 4) == 0) {
+				printf(" ");
+			}
+		}
+
+		switch (m->type) {
+			case BITFIELD_MEMBER_UNKNOWN:
+			case BITFIELD_MEMBER_RESERVED:
+				dump_bitfield_member_unk_res(member_value, m, context);
+				break;
+			case BITFIELD_MEMBER_ENUM:
+				dump_bitfield_member_enum(member_value, m, context);
+				break;
+		}
+
+		next_bit = m->offset + m->size;
+	}
+
+	if (next_bit < num_bits) {
+		fprintf(stderr, "WARNING: Bitfield %s; members do not cover all bits\n", description);
+	}
+}
+
 void dump_ag_password(size_t size, const uint8_t *data)
 {
-	for (size_t i = 0; i < size; ++i) {
+	for (size_t i = 0; i < size - 1; ++i) {
 		uint8_t c = data[i] ^ 0xab;
 		if (c == 0) {
 			break;
@@ -312,7 +437,7 @@ void dump_ag_link_type(size_t size, const uint8_t *data)
 
 
 void dump_field_value(const struct ag_field_spec* field,
-	const uint8_t* data, const struct dump_context *context)
+	const uint8_t* data, struct dump_context *context)
 {
 	(void)context;
 
@@ -337,6 +462,9 @@ void dump_field_value(const struct ag_field_spec* field,
 			break;
 		case FIELD_TYPE_DATETIME:
 			dump_datetime(field->size, data);
+			break;
+		case FIELD_TYPE_BITFIELD:
+			dump_bitfield(field->size, field->description, (const struct ag_bitfield_member*)field->context, field->context_size, data, context);
 			break;
 		case FIELD_TYPE_AG_PASSWD:
 			dump_ag_password(field->size, data);

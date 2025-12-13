@@ -21,12 +21,14 @@ struct ag_main_header {
 	uint16_t last_obj_in_file;
 	uint16_t first_free_link;
 	uint16_t last_link_in_file;
-	uint8_t unknown040[24];
+	uint16_t main_category;
+	uint8_t unknown042[22];
 	uint8_t unknown058[4];
 	//uint16_t last_free_obj;
 	//uint16_t last_free_link;
 	uint16_t save_date;
-	uint8_t unknown05e[2];
+	uint8_t backup_settings;
+	uint8_t unknown05f;
 	uint16_t save_time;
 	uint8_t unknown062[18];
 	uint16_t category_count;

@@ -13,4 +13,9 @@ if [ ! -d "${experiment_dir}" ]; then
     exit 1
 fi
 
+if ! cp -p "${experiment_dir}/AFTER.AG" "${experiment_dir}/BEFORE.AG" ; then
+    echo "Failed to create output file"
+    exit 1
+fi
+
 dosbox -conf examine/local.conf -c "MOUNT C examine/CDrive" -c "MOUNT D ${experiment_dir}" -c "C:" -c "CD AGENDA" -c "AGENDA D:\\AFTER.AG" -c "EXIT" 2> /dev/null

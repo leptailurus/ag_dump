@@ -285,11 +285,149 @@ Links:
   * Type: 0
   * 0x04 / 0x06: Prev/next free object
 * Main header:
-  * 0x58: Last free object
-  * 0x5a: Last free link
-  * 0x68: Last discarded item?
-  * 0x72: Number of items
-  * 0x76: Number of free links
-  * 0x01e8: Selected object (item/category)?
-  * 0x01ee: 
 * Discarding items assigns them to the !Trash! cateogory and discards their previous category assignments
+
+## Main Header
+* 0x40, u16: Main category ID?
+* 0x58: Last free object
+* 0x5a: Last free link
+* 0x5e
+  * Bit 0: Make backup on open (0: No, 1: Yes)
+* 0x62: ID of item with export file name for Done items
+* 0x68: Last discarded item?
+* 0x72: Number of items
+* 0x76: Number of free links
+* 0x7c: Tab width (1-40)
+* 0x88: (u16) ID of Item with name of auto-import file; 00 00 if none
+* 0x8c
+  * Bits 6-7: Empty Trash (0x80: End of day, 0xC0: When item is discarded, 0x00: On demand, 0x40: When file is closed)
+* 0x8d:
+  * Bit 0: Import new columns in (1: All sections, 0: Current section)
+* 0x99
+  * Bit 0: Get reservation (0: Automatically, 1: Manually)
+* 0x00c2, u16: Year of file creation
+* 0x01e8: Selected object (item/category)?
+* 0x01ee: 
+
+
+* Global Date Settings
+  * Display Format
+    * Display date and/or time: (Date time, Time date, Time only, Date only)
+      * 0x0183, bits 4-5:        20       / 40       / 60       / 00
+    * Show day of week (Yes, No)
+      * 0x0183, bit 1: 3c / 2c
+    * Date format:       (MMDDYY, MMDDYYYY, DDMMYY, DDMMYYYY, YYMMDD, YYYYMMDD, YYDDMM, YYYYDDMM, MMMDD, MMMDDYY, MMMMDDYYYY, DDMMM, DDMMMYY, DDMMMYYYY, <Day> #, Day #, <Week> #, Week #, Relative, Relative #)
+      * 0x0182, bits 0-4: 01    / 02      / 03    / 04      / 05    / 06      / 07    / 08      / 09   / 0a     / 0b        / 0c   / 0d     / 0e       / 0f     / 10   / 11      / 12    / 13      / 14
+    * Date Separator:    ('/', '-', '.', ',', ' ', ':')
+      * 0x182, bits 5-7:  00 / 20 / 40 / 60 / 80 / a0
+    * Clock:          (12hr, 24hr)
+      * 0x0183, bit 2: 04  / 00
+    * Show AM/PM:     (Yes, No)
+      * 0x0183, bit 3: 08 / 00
+    * Time separator: (':', 'hm')
+      * 0x0183, bit 0: 00 / 01
+  * Input Format
+    * Number Order:      (MDY, MYD, DMY, DYM, YDM, YMD)
+      * 0x0184, bits 0-2: 00 / 01 / 02 / 03 / 04 / 05
+    * Date Separator:    ('/', '-', '.', ',', ':')
+      * 0x0184, bits 5-7: 00 / 20 / 40 / 60 / 80
+    * Input Clock:    (24hr, 12hr)
+      * 0x0185, bit 3: 00  / 04
+  * Morning
+    * 0x0186, 2 bytes: Time of day | 0xc800
+  * Afternoon
+    * 0x018a, 2 bytes: Time of day | 0xc800
+  * Evening (value saved twice)
+    * 0x0188, 2 bytes: Time of day | 0xc800
+    * 0x018c, 2 bytes: Time of day | 0xc800
+  * Beginning of Week: (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
+    * 0x018e 0..6
+  * End of Week: (Sun, Mon, Tue, Wed, Thu, Fri, Sat)
+    * 0x0190 0..6
+  * First quarter:
+    * 0x01af, bits 3-7: Month Jan-Dec -> 0..11
+    * 0x01b0, bits 0-5: Day 1..31 -> 0..30
+  * Beginning of year:
+    * 0x01b5, bits 3-7: Month
+    * 0x01b6, bits 0-5: Day
+  * End of year:
+    * 0x01bb, bits 3-7: Month
+    * 0x01bc, bits 0-5: Day
+  * Month alone means  (First day, Last day, Nth day)
+    * 0x0192          : 20       / 21      / 01..1f
+  * Process Done items (No action, Discard, Export to Done file)
+    * 0x008d            71 / 73 / 79
+  * When     (Immediately, When file is closed, End of day)
+    * 0x008d  73 / 75 / 77 (Discard)
+              79 / 7b / 7d (Export)
+* Global Protection Settings
+  * Default view protection (No protection, Append only, Full protection)
+    * 0x0090, bits 1-2:      02           / 04         / 06
+    * Additional flags set in item (view?)
+  * User can add new views (Yes, No)
+    * 0x0090, bit 0:        01 / 00
+  * Default category protection (No, Yes)
+    * 0x008e, bit 4:             00/ 10
+  * Default category can have new children (No, Yes)
+    * 0x008e, bit 6:                        00, 40
+  * Seal the file
+    * 0x0098, bit 7: Unsealed (00), Sealed (80)
+    * 0x0198-0x01a3 (12 bytes): encrypted seal password
+* Auto-assign settings
+  * Text matching   (Off, On)
+    * 0x008d, bit 6: 00 / 40
+  * Match on            (Item text, Note text, Both item & note)
+    * 0x008b, bits 0-1:  01       / 02       / 03
+    * Missing value 00 used for "Global" in other contexts
+  * Required match strength (Exact, Partial, Minimal)
+    * 0x008f, bits 0-1:      01   / 02     / 03
+    * Missing value 00 used for "Global" in other contexts
+  * Confirm assignments (Always, Sometimes, Never)
+    * 0x008f, bits 2-3:  04    / 08       / 0c
+    * Missing value 00 used for "Global" in other contexts
+  * Ignore item text enclosed by (" ", < >, ' ', ( ), / /, # #, [ ], { })
+    * 0x0080 22 / 3c / 27 ... (ASCII code of first enclosing character)
+  * Ignore suffixes    (No, Yes)
+    * 0x008f, bits 4-5: 10/ 20
+    * Missing value 00 used for "Global" in other contexts
+  * Ignore accents      (No, Yes)
+    * 0x008f, bits 6-7:  40, 80
+    * Missing value 00 used for "Global" in other contexts
+  * Assignment conditions (Off, On)
+    * 0x008d, bit 5:       00 / 20
+  * Assignment actions (Off, On)
+    * 0x0098, bit 1:    00 / 02
+  * Apply conditions (Automatically, On demand, Never)
+    * Changes byte 0x35 of all(?) Category items
+    * 0x35: 00 / 01 / 02
+  * If an assignment conflicts with another (Keep the old, Override the old)
+    * 0x008e, bits 2-3:                      04          / 08
+    * Missing value 00 used for "Global" in other contexts
+  * Relationship of text and assignment conditions (OR, AND)
+    * 0x008e, bits 0-1:                             01/ 02
+    * Missing value 00 used for "Global" in other contexts
+    
+Time of day:
+00:00 00 c8
+00:01 20 c8
+00:02 40 c8
+00:08 00 c9
+00:16 00 ca
+00:32 00 cc
+00:50 60 cf
+01:00 01 c8
+01:04 81 c8
+02:00 02 c8
+11:00 0b c8
+12:00 0c c8
+23:00 17 c8
+
+bits  0-4: Hour
+bits 5-10: Minute
+
+07 ca
+
+0000 0 11 1110 0 1010
+
+34 9e
+0011 0100 100 1 1110

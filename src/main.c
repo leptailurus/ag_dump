@@ -205,12 +205,14 @@ void dump_hex(const uint8_t *data, size_t length, size_t abs_offset, size_t rel_
 
 void dump_fields(const uint8_t *base,
 	const struct ag_field_spec *fields,
-	size_t count, const struct dump_context *context)
+	size_t count, struct dump_context *context)
 {
 	const size_t base_offset = base - ag_file_data;
 	for (size_t i = 0; i < count; ++i) {
 		const uint8_t *data = base + fields[i].offset;
 		const size_t abs_offset = base_offset + fields[i].offset;
+		context->global_offset = abs_offset;
+		context->local_offset = fields[i].offset;
 		printf("  %s: ", fields[i].description);
 		dump_field_value(&fields[i], data, context);
 		printf("\n");
@@ -224,6 +226,7 @@ void dump_main_header(struct dump_context *context) {
 	printf("Main Header\n");
 	printf("===========\n");
 	context->current_object = start_address;
+	snprintf(context->current_object_name, sizeof(context->current_object_name), "Main Header");
 	dump_fields(start_address, ag_main_header_fields, ag_main_header_field_count, context);
 	printf("\n");
 }
@@ -233,6 +236,7 @@ void dump_extra_header(struct dump_context *context) {
 	printf("Extra Header\n");
 	printf("============\n");
 	context->current_object = start_address;
+	snprintf(context->current_object_name, sizeof(context->current_object_name), "Extra Header");
 	dump_fields(start_address, ag_extra_header_fields, ag_extra_header_field_count, context);
 	printf("\n");
 }
@@ -267,6 +271,7 @@ void dump_objects_structs(const uint8_t *data, struct dump_context *context) {
 	printf("==============\n\n");
 	for (size_t i = 0; i < ag_obj_pages_count; ++i) {
 		for (size_t j = 0; j < OBJECTS_PER_PAGE; ++j) {
+			snprintf(context->current_object_name, sizeof(context->current_object_name), "Object %lld", (i * OBJECTS_PER_PAGE) + j);
 			dump_object_struct(data, context);
 			data += OBJECT_STRUCT_SIZE;
 		}
@@ -297,6 +302,7 @@ void dump_link_structs(const uint8_t *data, struct dump_context *context) {
 	printf("============\n\n");
 	for (size_t i = 0; i < ag_link_pages_count; ++i) {
 		for (size_t j = 0; j < LINKS_PER_PAGE; ++j) {
+			snprintf(context->current_object_name, sizeof(context->current_object_name), "Link %lld", (i * LINKS_PER_PAGE) + j);
 			dump_link_struct(data, context);
 			data += LINK_STRUCT_SIZE;
 		}
@@ -309,6 +315,10 @@ void dump_link_structs(const uint8_t *data, struct dump_context *context) {
 }
 
 void dump_extra_data(const uint8_t *data, size_t size, struct dump_context *context) {
+	context->current_object = data;
+	snprintf(context->current_object_name, sizeof(context->current_object_name), "Extra Data");
+	context->global_offset = data - ag_file_data;
+	context->local_offset = 0;
 	printf("Extra Data\n");
 	printf("==========\n\n");
 	printf("  (%zu bytes)\n", size);
