@@ -294,7 +294,10 @@ Links:
 * 0x5e
   * Bit 0: Make backup on open (0: No, 1: Yes)
 * 0x62: ID of item with export file name for Done items
-* 0x68: Last discarded item?
+* 0x68: Last discarded item
+* 0x6a: Category search tree root (link structure ID)
+* 0x6c: Last imported file, date, time, file size (hex): TRANSFER.STF,12/13/25;23:39:07,00000059
+
 * 0x72: Number of items
 * 0x76: Number of free links
 * 0x7c: Tab width (1-40)

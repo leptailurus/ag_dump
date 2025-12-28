@@ -28,6 +28,18 @@ DEFINE_ENUM_VALUES(ag_global_off_on,
 	{0x02, "On"}
 );
 
+DECLARE_ENUM_VALUES(ag_text_enclosed_by);
+
+DEFINE_ENUM_VALUES(ag_text_enclosed_by,
+	   {'\"', "\" \""},
+	   {'<', "< >"},
+	   {'\'', "\' \'"},
+	   {'(', "( )"},
+	   {'/', "/ /"},
+	   {'#', "# #"},
+	   {'[', "[ ]"},
+	   {'{', "{ }"}
+);
 
 #define DEFINE_BITFIELD(name, ...) \
 const struct ag_bitfield_member name##_members[] = {__VA_ARGS__}; \
@@ -54,8 +66,11 @@ size_t M_CAT(STRUCT_NAME, _field_count) = \
 #define STRUCT_FIELD(field, desc, type) \
 { offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_##type, sizeof_field(struct ID(STRUCT_NAME), field), 0, 0 }
 
-#define STRUCT_BITFIELD(field, desc, bitfield) \
+#define STRUCT_FIELD_BITFIELD(field, desc, bitfield) \
 { offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_BITFIELD, sizeof_field(struct ID(STRUCT_NAME), field), bitfield##_members, bitfield##_member_count }
+
+#define STRUCT_FIELD_ENUM(field, desc, enum_name) \
+{ offsetof(struct ID(STRUCT_NAME), field), desc, FIELD_TYPE_ENUM, sizeof_field(struct ID(STRUCT_NAME), field), enum_name##_values, enum_name##_value_count }
 
 #define STRUCT_NAME ag_main_header
 STRUCT_BEGIN
@@ -67,15 +82,35 @@ STRUCT_BEGIN
 	STRUCT_FIELD(first_free_link, "First free link", UINT),
 	STRUCT_FIELD(last_link_in_file, "Last link in file", UINT),
 	STRUCT_FIELD(main_category, "Main category", UINT),
-	STRUCT_FIELD(unknown042, "Unknown", UNKNOWN),
-	STRUCT_FIELD(unknown058, "Unknown", UNKNOWN),
+	STRUCT_FIELD(first_view, "First view", UINT),
+	STRUCT_FIELD(active_view, "Active view", UINT),
+	STRUCT_FIELD(reserved046, "Reserved", RESERVED),
+	STRUCT_FIELD(unknown052, "Unknown", UNKNOWN),
+	STRUCT_FIELD(reserved054, "Reserved", RESERVED),
+	STRUCT_FIELD(previous_active_view, "Previously active view", UINT),
+	STRUCT_FIELD(last_free_obj, "Last free object", UINT),
+	STRUCT_FIELD(last_free_link, "Last free link", UINT),
 	STRUCT_FIELD(save_date, "Save date", FAT_DATE),
-	STRUCT_BITFIELD(backup_settings, "Backup settings", ag_backup_settings),
+	STRUCT_FIELD_BITFIELD(backup_settings, "Backup settings", ag_backup_settings),
 	STRUCT_FIELD(unknown05f, "Unknown", UNKNOWN),
 	STRUCT_FIELD(save_time, "Save time", FAT_TIME),
-	STRUCT_FIELD(unknown062, "Unknown", UNKNOWN),
+	STRUCT_FIELD(done_export_file, "Done items export file", UINT),
+	STRUCT_FIELD(reserved064, "Reserved 0x0064", RESERVED),
+	STRUCT_FIELD(last_discarded_item, "Last discarded item", UINT),
+	STRUCT_FIELD(search_tree_root, "Search tree root", UINT),
+	STRUCT_FIELD(last_imported_file, "Last imported file", UINT),
+	STRUCT_FIELD(reserved06e, "Reserved 0x006e", RESERVED),
+	STRUCT_FIELD(circular_category, "Circular reference category", UINT),
+	STRUCT_FIELD(item_count, "Item count", UINT),
 	STRUCT_FIELD(category_count, "Category count", UINT),
-	STRUCT_FIELD(unknown076, "Unknown", UNKNOWN),
+	STRUCT_FIELD(free_link_count, "Free link count", UINT),
+	STRUCT_FIELD(free_object_count, "Free object count", UINT),
+	STRUCT_FIELD(reserved07a, "Reserved 0x007a", RESERVED),
+	STRUCT_FIELD(tab_width, "Tab width", UINT),
+	STRUCT_FIELD(reserved07d, "Reserved 0x007d", RESERVED),
+	STRUCT_FIELD_ENUM(ignore_text_enclosed_by, "Ignore item text enclosed by", ag_text_enclosed_by),
+	STRUCT_FIELD(reserved081, "Reserved 0x0081", RESERVED),
+	STRUCT_FIELD(unknown084, "Unknown", UNKNOWN),
 	STRUCT_FIELD(save_datetime, "Save date/time", DATETIME),
 	STRUCT_FIELD(unknown170, "Unknown", UNKNOWN)
 STRUCT_END
@@ -187,8 +222,16 @@ STRUCT_BEGIN
 STRUCT_END
 #undef STRUCT_NAME
 
-void dump_unknown_value(size_t size, const uint8_t *data) {
-	(void)data;
+void dump_unknown_reserved_value(size_t size, bool is_reserved, const uint8_t *data, struct dump_context *context) {
+	if (is_reserved) {
+		for (size_t i = 0; i < size; i++) {
+			if (data[i] != 0) {
+				fprintf(stderr, "WARNING: %s (offset 0x%08llx, local 0x%04llx) reserved area contains nonzero bytes\n",
+						context->current_object_name, context->global_offset, context->local_offset);
+				break;
+			}
+		}
+	}
 	printf("(%zu bytes)", size);
 }
 
@@ -263,7 +306,7 @@ void dump_bitfield_member_unk_res(uint32_t value, const struct ag_bitfield_membe
 	else {
 		printf("Reserved (0x%x)", value);
 		if (value != 0) {
-			fprintf(stderr, "WARNING: %s (offset 0x%08llx, local 0x%04llx) reserved bitfield member at offset %lld is nonzero",
+			fprintf(stderr, "WARNING: %s (offset 0x%08llx, local 0x%04llx) reserved bitfield member at offset %lld is nonzero\n",
 					context->current_object_name, context->global_offset, context->local_offset, member->offset);
 		}
 	}
@@ -367,6 +410,22 @@ void dump_bitfield(size_t size, const char* description, const struct ag_bitfiel
 	}
 }
 
+void dump_enum(size_t size, const uint8_t *data, const struct ag_field_spec *spec)
+{
+	const struct ag_enum_value* enum_values = (const struct ag_enum_value*)spec->context;
+	bool found = false;
+	for (size_t i = 0; i < spec->context_size; i++) {
+		if (data[0] == enum_values[i].value) {
+			found = true;
+			printf("%s (0x%x)", enum_values[i].name, data[0]);
+			break;
+		}
+	}
+	if (!found) {
+		printf("<Invalid> (0x%x)", data[0]);
+	}
+}
+
 void dump_ag_password(size_t size, const uint8_t *data)
 {
 	for (size_t i = 0; i < size - 1; ++i) {
@@ -443,7 +502,10 @@ void dump_field_value(const struct ag_field_spec* field,
 
 	switch (field->type) {
 		case FIELD_TYPE_UNKNOWN:
-			dump_unknown_value(field->size, data);
+			dump_unknown_reserved_value(field->size, false, data, context);
+			break;
+		case FIELD_TYPE_RESERVED:
+			dump_unknown_reserved_value(field->size, true, data, context);
 			break;
 		case FIELD_TYPE_INT:
 			dump_int_value(field->size, true, data);
@@ -465,6 +527,9 @@ void dump_field_value(const struct ag_field_spec* field,
 			break;
 		case FIELD_TYPE_BITFIELD:
 			dump_bitfield(field->size, field->description, (const struct ag_bitfield_member*)field->context, field->context_size, data, context);
+			break;
+		case FIELD_TYPE_ENUM:
+			dump_enum(field->size, data, field);
 			break;
 		case FIELD_TYPE_AG_PASSWD:
 			dump_ag_password(field->size, data);

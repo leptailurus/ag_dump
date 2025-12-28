@@ -14,6 +14,7 @@ enum ag_field_type {
 	FIELD_TYPE_FAT_TIME,
 	FIELD_TYPE_DATETIME,
 	FIELD_TYPE_BITFIELD,
+	FIELD_TYPE_ENUM,
 	/* Application-specific fields */
 	FIELD_TYPE_AG_PASSWD,
 	FIELD_TYPE_AG_ITEM_TYPE,
@@ -66,6 +67,8 @@ extern const size_t name##_member_count
 
 DECLARE_ENUM_VALUES(ag_no_yes);
 DECLARE_ENUM_VALUES(ag_global_off_on);
+
+DECLARE_ENUM_VALUES(ag_text_enclosed_by);
 
 DECLARE_BITFIELD(ag_backup_settings);
 
